@@ -1,6 +1,6 @@
 variable "region" {
   description = "AWS Deployment region."
-  default = "us-west-1"
+  default = "us-west-2"
 }
 
 variable "environment" {
@@ -10,27 +10,26 @@ variable "environment" {
 
 variable "vpc_cidr" {
   description = "Cidr for the VPC"
-  default = "10.2.0.0/16"
+  default = "10.0.0.0/16"
 }
 
 variable "public_subnets_cidr" {
   description = "pub subnet Cidr "
-  default = "10.2.1.0/24"
+  default = "10.0.1.0/24"
 }
-
 variable "private_subnets_cidr" {
   description = "priv subnet Cidr "
-  default = "10.2.2.0/24"
+  default = "10.0.2.0/24"
 }
 
-variable "owner" { default = "tp" }
-variable "ami" { 
-  default = "ami-0358d6db3187f001b"
-}
-
+variable "owner" { default = "terraform" }
+variable "ami" { type = string }
 variable "instance_type" { default = "t3.micro" }
 variable "volume_size" { default = "25" }
-variable nameHeader { default = "notSet" }
+variable "nameHeader" { default = "notSet" }
+variable "subnet_id" { default = "" }
+variable "vpc_id" { default = "" }
+
 
 variable "project" {
   type    = string
@@ -42,7 +41,15 @@ variable "pubkey_file" {
   default = "~/.ssh/id_ed25519.pub"
 }
 
-data "http" "my_ip" { url = "http://checkip.amazonaws.com/"}
+variable "other_sg_ids" { default = ""}
+
+#define userdata to execute right after boot
+locals {
+  instance-userdata = <<EOF
+  #!/bin/bash
+  yum -y update
+EOF
+}
 
 # get the latest amazon-linux-2-ami
 data "aws_ami" "amz_linux" {
@@ -61,12 +68,3 @@ data "aws_ami" "amz_linux" {
     values = ["x86_64"]
   }
 }
-
-#define userdata to execute right after boot
-locals {
-  instance-userdata = <<EOF
-  #!/bin/bash
-  yum -y update
-EOF
-}
-
