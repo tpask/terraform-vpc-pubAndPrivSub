@@ -4,7 +4,7 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = true
   enable_dns_support   = true
   tags = {
-    Name        = "${var.environment}-vpc"
+    Name        = "${var.nameHeader}-vpc"
     Environment = var.environment
   }
 }
@@ -13,7 +13,7 @@ resource "aws_vpc" "vpc" {
 resource "aws_internet_gateway" "ig" {
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name        = "${var.environment}-igw"
+    Name        = "${var.nameHeader}-igw"
     Environment = var.environment
   }
 }
@@ -24,12 +24,11 @@ resource "aws_eip" "nat_eip" {
 }
 /* NAT */
 resource "aws_nat_gateway" "nat" {
-  allocation_id = "eipalloc-0892768e34009b93c"
-  #allocation_id = aws_eip.nat_eip.id
+  allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public_subnet.id
   depends_on    = [aws_internet_gateway.ig]
   tags = {
-    Name        = "nat"
+    Name        = "${var.nameHeader}-nat"
     Environment = var.environment
   }
 }
@@ -39,7 +38,7 @@ resource "aws_subnet" "public_subnet" {
   cidr_block              = var.public_subnets_cidr
   map_public_ip_on_launch = true
   tags = {
-    Name        = "${var.environment}-public-subnet"
+    Name        = "${var.nameHeader}-public-subnet"
     Environment = var.environment
   }
 }
@@ -48,7 +47,7 @@ resource "aws_subnet" "private_subnet" {
   vpc_id                  = aws_vpc.vpc.id
   cidr_block              = var.private_subnets_cidr
   tags = {
-    Name        = "${var.environment}-private-subnet"
+    Name        = "${var.nameHeader}-private-subnet"
     Environment = var.environment
   }
 }
@@ -56,7 +55,7 @@ resource "aws_subnet" "private_subnet" {
 resource "aws_route_table" "private" {
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name        = "${var.environment}-private-route-table"
+    Name        = "${var.nameHeader}-private-route-table"
     Environment = var.environment
   }
 }
@@ -64,7 +63,7 @@ resource "aws_route_table" "private" {
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.vpc.id
   tags = {
-    Name        = "${var.environment}-public-route-table"
+    Name        = "${var.nameHeader}-public-route-table"
     Environment = var.environment
   }
 }
@@ -89,7 +88,7 @@ resource "aws_route_table_association" "private" {
 }
 /*==== VPC's Default Security Group ======*/
 resource "aws_security_group" "default" {
-  name        = "${var.environment}-default-sg"
+  name        = "${var.nameHeader}-default-sg"
   description = "Default security group to allow inbound/outbound from the VPC"
   vpc_id      = aws_vpc.vpc.id
   depends_on  = [aws_vpc.vpc]
@@ -111,3 +110,7 @@ resource "aws_security_group" "default" {
   }
 }
 
+# output
+output "vpc_id" { value = "${aws_vpc.vpc.id}" }
+output "public_subnet_id" { value = "${aws_subnet.public_subnet.id}"}
+output "private_subnet_id" { value = "${aws_subnet.private_subnet.id}"}
