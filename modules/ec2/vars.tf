@@ -23,18 +23,19 @@ variable "private_subnets_cidr" {
 }
 
 variable "owner" { default = "terraform" }
-variable "ami" { type = string }
 variable "instance_type" { default = "t3.micro" }
 variable "volume_size" { default = "25" }
-variable "nameHeader" { default = "notSet" }
 variable "subnet_id" { default = "" }
 variable "vpc_id" { default = "" }
-
-
-variable "project" {
-  type    = string
-  default = "test"
+variable "AMIS" { type = map(string) }
+variable "project" { default = "notSet" }
+variable "tags" {
+   default = {
+     Environment = "dev"
+   }
 }
+
+
 
 variable "pubkey_file" {
   type    = string

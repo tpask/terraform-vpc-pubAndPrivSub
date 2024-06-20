@@ -1,20 +1,14 @@
-# generate a random number
-resource "random_integer" "number" {
-  min = 10
-  max = 999
-}
-
 data "http" "my_ip" { url = "http://checkip.amazonaws.com/"}
 
 #add pubkey to AWS
 resource "aws_key_pair" "add_key" {
-  key_name   = "${var.nameHeader}-${random_integer.number.result}"
+  key_name   = var.project
   public_key = file(var.pubkey_file)
 }
 
 #create security groups
 resource "aws_security_group" "allow_ssh" {
-  name        = "${var.nameHeader}-${random_integer.number.result}"
+  name        = var.project
   description = "Allow all inbound connections from my workstaion"
   vpc_id      = var.vpc_id
   ingress {
@@ -29,15 +23,14 @@ resource "aws_security_group" "allow_ssh" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  tags = {
-    Owner = "${var.owner} - allow all to my address only",
-    Name = "${var.nameHeader}-${random_integer.number.result}"
-  }
+  tags = var.tags
+  lifecycle { ignore_changes = [tags["Create_date_time"], ] }
 }
 
 resource "aws_instance" "public" {
-  # ami                         = var.ami == "" ? data.aws_ami.ubuntu.id : var.ami
-  ami                         = var.ami
+  for_each = var.AMIS
+  ami      = each.value
+  
   instance_type               = var.instance_type
   key_name                    = aws_key_pair.add_key.key_name
   subnet_id                   = var.subnet_id
@@ -51,7 +44,10 @@ resource "aws_instance" "public" {
     volume_type           = "gp2"
   }
   tags = {
-    Name = "public-${var.nameHeader}"
-     Owner = "${var.owner}"
+      Name        = "${var.project}- ${each.key}"
+      Environment = var.environment
+      owner = "tp"
+      Create_date_time = formatdate("YYYY-MM-DD hh:mm:ss ZZZ", timestamp())
   }
+  lifecycle { ignore_changes = [tags["Create_date_time"], ] }
 }

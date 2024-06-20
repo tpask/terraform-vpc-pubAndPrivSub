@@ -5,7 +5,7 @@ module "networking" {
   vpc_cidr             = var.vpc_cidr
   public_subnets_cidr  = var.public_subnets_cidr
   private_subnets_cidr = var.private_subnets_cidr
-  nameHeader           = "oval"
+  tags                 = local.common_tags
 }
 
 output "vpc_id" { value = "${module.networking.vpc_id}"}
@@ -14,13 +14,14 @@ output "private_subnet_id" { value = "${module.networking.private_subnet_id}"}
 
 
 module "publicEC2" {
-  source = "./modules/ec2"
-  project = var.project
+  source      = "./modules/ec2"
+  project     = var.project
   pubkey_file = var.pubkey_file
-  vpc_id = module.networking.vpc_id
-  subnet_id = module.networking.public_subnet_id
-  ami = data.aws_ami.amz_linux.id
-  nameHeader = "oval"
+  vpc_id      = module.networking.vpc_id
+  subnet_id   = module.networking.public_subnet_id
+  AMIS        = local.AMIS
+  owner       = var.owner
+  environment = var.environment
 }
 
 
