@@ -23,8 +23,16 @@ variable "private_subnets_cidr" {
   default = []
 }
 
-variable nameHeader {
+variable "nameHeader" {
   default = "notSet"
 }
 
+variable "owner" {
+  default = "notSet"
+}
 
+variable "tags" {
+   default = {
+     Environment = "dev"
+   }
+}

@@ -1,0 +1,8 @@
+ #terraform.tfvars.sample 
+  AMIS = {
+    al2       = data.aws_ami.al2.id #"ami-0ca285d4c2cda3300"
+    #al2023   = data.aws_ami.al2023.id # "ami-0eb9d67c52f5c80e5"
+    #centos7  = "ami-08c191625cfb7ee61" # subscribe: https://aws.amazon.com/marketplace/server/procurement?productId=d9a3032a-921c-4c6d-b150-bde168105e42
+    #centos8  = "ami-031e6a417aae9b9f6" # streams - subscribe: https://aws.amazon.com/marketplace/server/procurement?productId=a5911e94-1971-4697-9bc5-02904340f1df
+    #centos9   = "ami-094cc0ced7b91fcf0" #9stream us-west-2
+  }
