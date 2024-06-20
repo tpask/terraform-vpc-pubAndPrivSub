@@ -1,3 +1,4 @@
+
 module "networking" {
   source = "./modules/networking" 
   region               = var.region
@@ -8,10 +9,12 @@ module "networking" {
   tags                 = local.common_tags
 }
 
-output "vpc_id" { value = "${module.networking.vpc_id}"}
-output "public_subnet_id" { value = "${module.networking.public_subnet_id}"}
-output "private_subnet_id" { value = "${module.networking.private_subnet_id}"}
-
+#output "vpc_id" { value = "${module.networking.vpc_id}"}
+#output "public_subnet_id" { value = "${module.networking.public_subnet_id}"}
+#output "private_subnet_id" { value = "${module.networking.private_subnet_id}"}
+#output "centos7" {value = data.aws_ami.centos7}
+#output "centos8" {value = data.aws_ami.centos8}
+#output "centos9" {value = data.aws_ami.centos9}
 
 module "publicEC2" {
   source      = "./modules/ec2"
@@ -23,5 +26,3 @@ module "publicEC2" {
   owner       = var.owner
   environment = var.environment
 }
-
-

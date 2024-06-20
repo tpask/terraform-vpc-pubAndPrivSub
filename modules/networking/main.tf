@@ -11,6 +11,7 @@ resource "aws_vpc" "vpc" {
 resource "aws_internet_gateway" "ig" {
   vpc_id = aws_vpc.vpc.id
   tags = var.tags
+  lifecycle { ignore_changes = [tags["Create_date_time"], ] }
 }
 /* Elastic IP for NAT */
 resource "aws_eip" "nat_eip" {

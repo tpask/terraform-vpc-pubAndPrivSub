@@ -11,6 +11,6 @@
 
 tfvars.tf
 *.plan
-*.tfvars
+terraform.tfvars
 *.pem
 backend.tf

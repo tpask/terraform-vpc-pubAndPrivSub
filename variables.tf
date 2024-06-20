@@ -29,7 +29,7 @@ variable "instance_type" { default = "t3.micro" }
 variable "volume_size" { default = "25" }
 variable "project" { default = "oval" }
 variable "pubkey_file" { default = "~/.ssh/id_ed25519.pub"}
-#variable "AMIS" { type = map(string) }
+variable "AMIS" { type = map(string) }
 
 data "http" "my_ip" { url = "http://checkip.amazonaws.com/"}
 
@@ -75,10 +75,48 @@ data "aws_ami" "centos7" {
     values = ["CentOS 7*"]
   }
   filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  } 
+  filter {
     name   = "virtualization-type"
     values = ["hvm"]
   }
-  owners = ["679593333241"]  # CentOS official AWS account ID
+  owners = ["679593333241"]  # aws-marketplace - various owner
+}
+
+data "aws_ami" "centos8" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["CentOS Stream 8*"]
+  }
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  } 
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["125523088429"]  # CentOS official AWS account ID
+}
+
+data "aws_ami" "centos9" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["CentOS Stream 9*"]
+  }
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  } 
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+  owners = ["125523088429"]  # CentOS official AWS account ID
 }
 
 
@@ -94,12 +132,13 @@ EOF
     owner = "tp"
     Create_date_time = formatdate("YYYY-MM-DD hh:mm:ss ZZZ", timestamp())
   }
-  AMIS = {
-    #al2       = data.aws_ami.al2.id #"ami-0ca285d4c2cda3300"
-    al2023   = data.aws_ami.al2023.id # "ami-0eb9d67c52f5c80e5"
-    centos7  = "ami-08c191625cfb7ee61" # subscribe: https://aws.amazon.com/marketplace/server/procurement?productId=d9a3032a-921c-4c6d-b150-bde168105e42
-    #centos8  = "ami-031e6a417aae9b9f6" # streams - subscribe: https://aws.amazon.com/marketplace/server/procurement?productId=a5911e94-1971-4697-9bc5-02904340f1df
-    #centos9   = "ami-094cc0ced7b91fcf0" #9stream us-west-2
+    AMIS = {
+      al2       = data.aws_ami.al2.id #"ami-0ca285d4c2cda3300"
+      #al2023   = data.aws_ami.al2023.id # "ami-0eb9d67c52f5c80e5"
+      #centos7  = data.aws.ami.centos7.id #"ami-08c191625cfb7ee61" # subscribe: https://aws.amazon.com/marketplace/server/procurement?productId=d9a3032a-921c-4c6d-b150-bde168105e42
+      #centos8  = data.aws.ami.centos8.id #"ami-031e6a417aae9b9f6" # streams - subscribe: https://aws.amazon.com/marketplace/server/procurement?productId=a5911e94-1971-4697-9bc5-02904340f1df
+      #centos9  = data.aws.ami.centos9.id #"ami-094cc0ced7b91fcf0" #9stream us-west-2
   }
+
 }
 
